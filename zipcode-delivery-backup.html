@@ -1,0 +1,61 @@
+<style>
+.check{background: #fff; font-size:15px; color:#03C;}
+</style>
+
+
+<div style="margin-bottom: 15px;">
+  <label for="zip-input" style="display:block; font-weight:bold; font-size:30px;">Enter your ZIP code to get estimated delivery time:</label>
+  <input id="zip-input" type="text" placeholder="e.g. 46000" maxlength="10" style="padding: 5px; margin:20px; width: 200px;">
+  <button class="check" onclick="startDeliveryEstimate()" style="margin-left: 10px; padding: 5px 10px;">Check</button>
+</div>
+
+<div id="delivery-timer" style="font-size: 18px; color: #DDB101; display:none;">
+  Your delivery is <span id="countdown"></span> minutes away.
+</div>
+
+<script>
+  const storeZip = "10001"; // Your store ZIP code
+  const distanceMap = {
+    "46604": 60.4,
+    "46000": 2,
+    "47390": 3,
+    "47560": 5,
+    "90210": 40,
+    "30301": 20,
+    "60601": 15,
+    // Add more ZIP codes and their approximate distance (in km) from your store
+  };
+
+  function getDistanceFromZip(userZip) {
+    return distanceMap[userZip] !== undefined ? distanceMap[userZip] : null;
+  }
+
+  function startDeliveryEstimate() {
+    const zipInput = document.getElementById("zip-input").value.trim();
+    const distance = getDistanceFromZip(zipInput);
+
+    if (distance === null) {
+      alert("Sorry, we can't calculate delivery time for that ZIP code.");
+      return;
+    }
+
+    const deliveryMinutes = distance * 5;
+    let remainingSeconds = deliveryMinutes * 60;
+
+    document.getElementById("delivery-timer").style.display = "block";
+
+    function updateCountdown() {
+      const minutes = Math.floor(remainingSeconds / 60);
+      const seconds = remainingSeconds % 60;
+      document.getElementById("countdown").textContent =
+        String(minutes).padStart(2, '0') + ":" + String(seconds).padStart(2, '0');
+
+      if (remainingSeconds > 0) {
+        remainingSeconds--;
+        setTimeout(updateCountdown, 1000);
+      }
+    }
+
+    updateCountdown();
+  }
+</script>
